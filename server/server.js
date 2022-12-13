@@ -3,10 +3,12 @@ const express = require("express");
 const helmet = require("helmet");
 const morgan = require("morgan");
 const mongoose = require("mongoose");
+const cors = require("cors");
 
 const workoutRoutes = require("./routes/workouts.route");
 
 const app = express();
+app.use(cors());
 
 app.use(helmet());
 
