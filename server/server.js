@@ -4,10 +4,20 @@ const helmet = require("helmet");
 const morgan = require("morgan");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const rateLimit = require("express-rate-limit");
 
 const workoutRoutes = require("./routes/workouts.route");
 
 const app = express();
+
+//Rate limit the api calls
+const limiter = rateLimit({
+  windowMs: 1 * 60 * 1000,
+  max: 30, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+});
+
 app.use(cors());
 
 app.use(helmet());
@@ -18,7 +28,7 @@ app.use(express.json());
 app.use(morgan("short"));
 
 //routes
-app.use("/api/workouts", workoutRoutes);
+app.use("/api/workouts", limiter, workoutRoutes);
 
 //connect to db
 mongoose.connect(
